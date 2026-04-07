@@ -1,6 +1,7 @@
 # Python
 ml_classifier.egg-info
 __pycache__
+.dvc
 
 # Data
 data/**/*.csv
