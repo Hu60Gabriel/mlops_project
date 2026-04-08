@@ -160,7 +160,7 @@ def train_model(train_data: pd.DataFrame, params: dict[str, int | float]) -> Non
             "nested": True,
         }
     
-    with mlflow.start_run():
+    with mlflow.start_run(**extra_args):
         mlflow.log_params(params)  # Log hyperparameters to MLflow
 
         tf.keras.utils.set_random_seed(params.pop("random_seed"))
