@@ -4,6 +4,7 @@ import os
 
 import joblib
 import mlflow
+from mlflow import runs
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -131,8 +132,33 @@ def train_model(train_data: pd.DataFrame, params: dict[str, int | float]) -> Non
         train_data (pd.DataFrame): Training dataset.
         params (dict[str, int | float]): Model hyperparameters.
     """
-    mlflow.set_experiment("ml_classification")    # Set up MLflow experiment
-    mlflow.keras.autolog()                        # Automatically log Keras metrics and artifacts
+    # Set up MLflow experiment
+    mlflow.set_experiment("ml_classification") 
+    
+    # Automatically log Keras metrics and artifacts
+    mlflow.keras.autolog()
+
+    # Setting MLflow if we are running a DVC experiment
+    is_experiment = os.getenv("DVC_EXP_NAME") is not None
+    extra_args = {}
+    if is_experiment:
+        runs = mlflow.search_runs(
+            experiment_ids=[os.getenv("MLFLOW_EXPERIMENT_ID")],
+            filter_string="tags.dvc_exp = 'True'",
+            order_by=["start_time DESC"],
+        )
+        if runs.empty:
+            with mlflow.start_run() as parent_run:
+                mlflow.set_tag("dvc_exp", True)
+                parent_run_id = parent_run.info.run_id
+        else:
+            parent_run_id = runs.iloc[0].run_id
+        run_name = os.getenv("DVC_EXP_NAME")
+        extra_args = {
+            "parent_run_id": parent_run_id, 
+            "run_name": run_name, 
+            "nested": True,
+        }
     
     with mlflow.start_run():
         mlflow.log_params(params)  # Log hyperparameters to MLflow
