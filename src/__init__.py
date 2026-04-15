@@ -1,8 +1,17 @@
 from json import load
 import logging
 from dotenv import load_dotenv
+import dagshub
 
 load_dotenv()
+
+
+# Initialize DagsHub with credentials
+dagshub.init(
+	repo_owner='Hu60Gabriel',
+	repo_name='mlops_project'
+)
+
 
 # Configure the logging strategy
 logging.basicConfig(
