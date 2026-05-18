@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
+
 project_root = Path(__file__).resolve().parents[1]
 
 def get_dvc_stages():
