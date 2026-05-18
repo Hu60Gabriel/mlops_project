@@ -1,9 +1,10 @@
 from json import load
 import logging
+from pathlib import Path
 from dotenv import load_dotenv
 import dagshub
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env")
 
 
 # Initialize DagsHub with credentials
